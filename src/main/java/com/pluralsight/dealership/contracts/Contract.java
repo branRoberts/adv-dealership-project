@@ -1,5 +1,7 @@
-package com.pluralsight.dealership;
+package com.pluralsight.dealership.contracts;
 
+
+import com.pluralsight.dealership.Vehicle;
 
 public abstract class Contract {
     private String date;

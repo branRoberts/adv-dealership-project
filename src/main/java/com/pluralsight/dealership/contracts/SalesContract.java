@@ -1,6 +1,8 @@
-package com.pluralsight.dealership;
+package com.pluralsight.dealership.contracts;
 
-public class SalesContract extends Contract{
+import com.pluralsight.dealership.Vehicle;
+
+public class SalesContract extends Contract {
 
     private double salesTaxAmount;
     private double recordingFee;
