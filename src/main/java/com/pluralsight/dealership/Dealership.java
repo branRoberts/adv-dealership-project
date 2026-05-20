@@ -90,7 +90,7 @@ public class Dealership {
             }
         }
         return list;}
-    public ArrayList<Vehicle> getVehiclesByvehicleType(String vehicleType) {
+    public ArrayList<Vehicle> getVehiclesVehicleType(String vehicleType) {
         ArrayList<Vehicle> list = new ArrayList<>();
         for (Vehicle vehicle : inventory) {
             if (vehicle.getVehicleType().equalsIgnoreCase(vehicleType)) {
@@ -98,4 +98,12 @@ public class Dealership {
             }
         }
         return list; }
+    public Vehicle findVehicleByVin(int vin) {
+        for (Vehicle vehicle : inventory) {
+            if (vehicle.getVin() == vin) {
+                return vehicle;
+            }
+        }
+        return null;
+    }
 }

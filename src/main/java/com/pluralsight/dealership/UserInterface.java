@@ -1,6 +1,11 @@
 package com.pluralsight.dealership;
 
 
+import com.pluralsight.dealership.contracts.ContractFileManager;
+import com.pluralsight.dealership.contracts.LeaseContract;
+import com.pluralsight.dealership.contracts.SalesContract;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -26,6 +31,7 @@ public class UserInterface {
             System.out.println("7. List all vehicles");
             System.out.println("8. Add vehicle");
             System.out.println("9. Remove vehicle");
+            System.out.println("10. Sale and Lease request");
             System.out.println("99. Exit");
 
             String choice = input.nextLine();
@@ -39,6 +45,7 @@ public class UserInterface {
                 case "7" -> processAllVehiclesRequest();
                 case "8" -> processAddVehicleRequest();
                 case "9" -> processRemoveVehicleRequest();
+                case "10" -> processSaleLeaseRequest();
                 case "99" -> {
                     System.out.println("Goodbye!");
                     return;
@@ -90,7 +97,7 @@ public class UserInterface {
     public void processVehicleTypeRequest(){
         System.out.println("Please enter the Vehicle Type for this vehicle");
         String vehicleType = input.nextLine();
-        displayVehicles(dealership.getVehiclesByvehicleType(vehicleType));
+        displayVehicles(dealership.getVehiclesVehicleType(vehicleType));
     }
     public void processAllVehiclesRequest(){
         displayVehicles(dealership.getAllVehicles());
@@ -132,5 +139,52 @@ public class UserInterface {
             fileManager.saveDealership(dealership);
         }else
             System.out.println("Couldn't find the vehicle");
+    }
+    public void processSaleLeaseRequest(){
+        System.out.println("Please enter the Vin Number Number for this vehicle");
+        int vin = Integer.parseInt(input.nextLine());
+        Vehicle vehicle = dealership.findVehicleByVin(vin);
+       if (vehicle == null){
+           System.out.println("Vehicle not found");
+           return;
+       }
+        System.out.println("Please enter the date");
+       String date = input.nextLine();
+        System.out.println("Enter your name");
+        String name = input.nextLine();
+        System.out.println("Please enter your email");
+        String email = input.nextLine();
+        System.out.println("Is this a sale or lease?");
+        String userChoice = input.nextLine();
+        if (userChoice.equalsIgnoreCase("sale")){
+            System.out.println("Do you want to finance? yes or no");
+            String financeChoice = input.nextLine();
+
+            if (financeChoice.equalsIgnoreCase("yes")){
+                boolean financeOption = financeChoice.equalsIgnoreCase("yes");
+                SalesContract salesContract = new SalesContract(date,name,email,vehicle,financeOption);
+                ContractFileManager fileManager = new ContractFileManager();
+                fileManager.saveContract(salesContract);
+                dealership.removeVehicle(vehicle);
+                DealershipFileManager dealershipFileManager = new DealershipFileManager();
+                dealershipFileManager.saveDealership(dealership);
+            }
+        }
+        else if (userChoice.equalsIgnoreCase("lease")){
+            if (LocalDate.now().getYear() - vehicle.getYear() > 3){
+                System.out.println("Cannot save the lease for this vehicle");
+                return;
+            }
+            LeaseContract leaseContract = new LeaseContract(date,name,email,vehicle);
+            ContractFileManager fileManager = new ContractFileManager();
+            fileManager.saveContract(leaseContract);
+            dealership.removeVehicle(vehicle);
+            DealershipFileManager dealershipFileManager = new DealershipFileManager();
+            dealershipFileManager.saveDealership(dealership);
+
+        }
+        else {System.out.println("Invalid input");}
+
+
     }
 }
