@@ -11,9 +11,9 @@ public class SalesContract extends Contract {
 
     public SalesContract(String date, String customerName, String customerEmail, Vehicle vehicle, boolean financeOption) {
         super(date, customerName, customerEmail, vehicle);
-        this.salesTaxAmount = getVehicle().getPrice() * 0.05;
+        this.salesTaxAmount = getVehicleSold().getPrice() * 0.05;
         this.recordingFee = 100;
-        if (getVehicle().getPrice() >= 10000){
+        if (getVehicleSold().getPrice() >= 10000){
             this.processingFee = 495;
         }else {
             this.processingFee = 295;
@@ -55,27 +55,28 @@ public class SalesContract extends Contract {
 
     @Override
     public double getTotalPrice() {
-        double totalPrice = 0;
-        totalPrice += getVehicle().getPrice() + salesTaxAmount + recordingFee + processingFee;
-
-        return totalPrice;
+        return getVehicleSold().getPrice() + salesTaxAmount + recordingFee + processingFee;
     }
 
     @Override
     public double getMonthlyPayment() {
-        double rate;
-        int month;
+        int numberOfPayments = 0;
+        double interestRate = 0;
+        if (financeOption) {
+            if (getVehicleSold().getPrice() >= 10000) {
+                numberOfPayments = 48;
+                interestRate = 4.25 / 1200;
+            } else {
+                numberOfPayments = 24;
+                interestRate = 5.25 / 1200;
+            }
 
-        if (!financeOption) {return 0;}
-        if(getTotalPrice() >= 10000){
-            rate = 0.0425 /12;
-            month = 48;
-        }else {
-            rate = 0.0525 / 12;
-            month = 24;
+            double monthlyPayment = getTotalPrice() * (interestRate * Math.pow(1 + interestRate, numberOfPayments)) / (Math.pow(1 + interestRate, numberOfPayments) - 1);
+            monthlyPayment = Math.round(monthlyPayment * 100);
+            monthlyPayment /= 100;
+            return monthlyPayment;
+        } else {
+            return 0.0;
         }
-        double monthlyPay = getTotalPrice() * (rate * Math.pow(1 + rate, month)) / (Math.pow(1 + rate, month) - 1);
-
-        return monthlyPay;
     }
 }

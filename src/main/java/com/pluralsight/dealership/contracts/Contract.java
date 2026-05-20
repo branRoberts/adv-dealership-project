@@ -40,7 +40,7 @@ public abstract class Contract {
         this.customerEmail = customerEmail;
     }
 
-    public Vehicle getVehicle() {
+    public Vehicle getVehicleSold() {
         return vehicle;
     }
 
